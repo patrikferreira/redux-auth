@@ -1,8 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { register } from "../features/auth/authSlice";
 
 export default function Register() {
+  const dispatch = useAppDispatch();
+  const { error } = useAppSelector((state) => state.auth);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -54,6 +58,14 @@ export default function Register() {
     if (!validate()) return;
     setIsLoading(true);
     setTimeout(() => {
+      dispatch(
+        register({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        })
+      );
+
       setIsLoading(false);
       router.push("/login");
     }, 1000);
@@ -143,6 +155,9 @@ export default function Register() {
             >
               {isLoading ? "creating..." : "sign up"}
             </button>
+            {error && (
+              <span className="text-red-500 text-sm text-center">{error}</span>
+            )}
           </form>
 
           <hr className="border-zinc-700" />

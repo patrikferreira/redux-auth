@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export default function Register() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -50,10 +51,12 @@ export default function Register() {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-
     if (!validate()) return;
-
-    router.push("/login");
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      router.push("/login");
+    }, 1000);
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -133,9 +136,12 @@ export default function Register() {
 
             <button
               type="submit"
-              className="mt-4 border border-zinc-700 w-full rounded-xl text-white text-sm font-semibold px-3 h-10 cursor-pointer hover:brightness-90 transition"
+              disabled={isLoading}
+              className={`mt-4 border border-zinc-700 w-full rounded-xl text-white text-sm font-semibold px-3 h-10  hover:brightness-90 transition ${
+                isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+              }`}
             >
-              create account
+              {isLoading ? "creating..." : "sign up"}
             </button>
           </form>
 

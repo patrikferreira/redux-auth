@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export default function Login() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -35,8 +36,11 @@ export default function Login() {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-
-    router.push("/");
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      router.push("/");
+    }, 1000);
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -85,9 +89,12 @@ export default function Login() {
 
             <button
               type="submit"
-              className="mt-4 border border-zinc-700 w-full rounded-xl text-white text-sm font-semibold px-3 h-10 cursor-pointer hover:brightness-90 transition"
+              disabled={isLoading}
+              className={`mt-4 border border-zinc-700 w-full rounded-xl text-white text-sm font-semibold px-3 h-10 hover:brightness-90 transition ${
+                isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+              }`}
             >
-              sign in
+              {isLoading ? "loading..." : "sign in"}
             </button>
           </form>
 

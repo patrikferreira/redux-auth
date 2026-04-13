@@ -1,8 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { login } from "../features/auth/authSlice";
+import { login, setUsers } from "../features/auth/authSlice";
 
 export default function Login() {
   const dispatch = useAppDispatch();
@@ -56,6 +56,11 @@ export default function Login() {
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   }
+
+  useEffect(() => {
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    dispatch(setUsers(users));
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-zinc-900">

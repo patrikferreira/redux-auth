@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { register } from "../features/auth/authSlice";
+import { register, User } from "../features/auth/authSlice";
 
 export default function Register() {
   const dispatch = useAppDispatch();
@@ -58,13 +58,32 @@ export default function Register() {
     if (!validate()) return;
     setIsLoading(true);
     setTimeout(() => {
-      dispatch(
-        register({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        })
+      const newUser = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      };
+
+      const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
+
+      const userExists = existingUsers.some(
+        (user: User) => user.email === newUser.email
       );
+
+      if (userExists) {
+        setErrors((prev) => ({
+          ...prev,
+          email: "User already exists",
+        }));
+        setIsLoading(false);
+        return;
+      }
+
+      const updatedUsers = [...existingUsers, newUser];
+
+      localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+      dispatch(register(newUser));
 
       setIsLoading(false);
       router.push("/login");
